@@ -59,4 +59,23 @@ describe('tasks managemenet spec', () => {
 		cy.get('.task').eq(0).contains('Task 1'); // can also use first() instead of eq(0)
 		cy.get('.task').eq(1).contains('Task 2'); // can also use last() instead of eq(1)
 	});
+
+	it('should filter tasks', () => {
+		cy.visit('http://127.0.0.1:5173/');
+
+		cy.contains('Add Task').click();
+		cy.get('.modal #title').type('Task 1');
+		cy.get('.modal #summary').type('First Task');
+		cy.get('.modal').find('select').select('moderate');
+		cy.get('.modal').contains('Add Task').click();
+
+		cy.get('#task-control').find('select').select('urgent');
+		cy.get('.task').should('have.length', 0);
+
+		cy.get('#task-control').find('select').select('moderate');
+		cy.get('.task').should('have.length', 1);
+
+		cy.get('#task-control').find('select').select('all');
+		cy.get('.task').should('have.length', 1);
+	});
 });
